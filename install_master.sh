@@ -32,4 +32,6 @@ sed -i 's!KUBE_MASTER=.*$!KUBE_MASTER="--master=http://${k8s-master}:8080"!' /et
 ./k8s-master-control.sh stop
 ./k8s-master-control.sh start
 
-
+# step 4:setting iptables
+echo "# step 4:setting iptables"
+iptables-restore ./iptables.master
