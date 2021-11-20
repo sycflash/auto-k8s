@@ -1,18 +1,17 @@
 #!/bin/bash
 
-yum -y  install kubernetes
-k8s_master=10.0.2.15
+echo "请确定这是安装k8s node!!!"
 
-sed -i 's!KUBE_MASTER=.*$!KUBE_MASTER="--master=http://'${k8s_master}':8080"!' /etc/kubernetes/config
-sed -i 's!KUBELET_ADDRESS=.*$!KUBELET_ADDRESS="--address=0.0.0.0"!' /etc/kubernetes/kubelet
-sed -i 's!KUBELET_HOSTNAME=.*$!KUBELET_HOSTNAME="--hostname-override='$(hostname)'"!' /etc/kubernetes/kubelet
-sed -i 's!KUBELET_API_SERVER=.*$!KUBELET_API_SERVER="--api-servers=http://'${k8s_master}':8080"!' /etc/kubernetes/kubelet
+./01_pre_check_and_configure.sh
 
-systemctl enable kubelet.service
-systemctl stop kubelet.service
-systemctl start kubelet.service
+./02_install_docker.sh
 
-systemctl enable kube-proxy.service
-systemctl stop kube-proxy.service
-systemctl start kube-proxy.service
+./03_install_kubernetes.sh
+
+./04_pull_docker_images.sh
+
+echo "请使用以上命令增加节点到k8s集群..."
+echo
+echo "kubeadm join 172.17.0.10:6443 --token sk70o8.wiv6hx1o2jjfb4ee \
+        --discovery-token-ca-cert-hash sha256:e6e7d8875598a07a974791afdfaa85ca7696b2532c692e768843073ad239a4b8"
 

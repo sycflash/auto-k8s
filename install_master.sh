@@ -1,37 +1,17 @@
 #!/bin/bash
 
-# step 1: install docker
-echo "# step 1: install docker"
-yum -y install docker
+echo "请确定这是安装k8s master!!!"
 
-# step 2: install etcd
-echo "# step 2: install etcd"
-yum install etcd -y
+./01_pre_check_and_configure.sh
 
-sed -i 's!ETCD_NAME.*$!ETCD_NAME=$(hostname)!' /etc/etcd/etcd.conf
-sed -i 's!ETCD_LISTEN_CLIENT_URLS=.*$!ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379,http://0.0.0.0:4001"!'  /etc/etcd/etcd.conf
-sed -i 's!ETCD_ADVERTISE_CLIENT_URLS=.*$!ETCD_ADVERTISE_CLIENT_URLS="http://0.0.0.0:2379,http://0.0.0.0:4001"!' /etc/etcd/etcd.conf
+./02_install_docker.sh
 
-systemctl stop etcd
-systemctl start etcd
-systemctl enable etcd
+./03_install_kubernetes.sh
 
-# step 3:install kubernetes
-echo "# step 3:install kubernetes"
-k8s-master=10.0.2.15
-yum -y  install kubernetes
+./04_pull_docker_images.sh
 
-sed -i 's!KUBE_API_ADDRESS=.*$!KUBE_API_ADDRESS="--insecure-bind-address=0.0.0.0"!' /etc/kubernetes/apiserver
-sed -i 's!KUBE_API_PORT=.*$!KUBE_API_PORT="--port=8080"!' /etc/kubernetes/apiserver
-sed -i 's!KUBE_ETCD_SERVERS=.*$!KUBE_ETCD_SERVERS="--etcd-servers=http://0.0.0.0:2379"!' /etc/kubernetes/apiserver
-sed -i 's!KUBE_ADMISSION_CONTROL=.*$!KUBE_ADMISSION_CONTROL="--admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"!' /etc/kubernetes/apiserver
+./05_init_master.sh
 
-sed -i 's!KUBE_MASTER=.*$!KUBE_MASTER="--master=http://${k8s-master}:8080"!' /etc/kubernetes/config
+./06_install_cni_flannel.sh
 
-./k8s-master-control.sh enable
-./k8s-master-control.sh stop
-./k8s-master-control.sh start
-
-# step 4:setting iptables
-echo "# step 4:setting iptables"
-iptables-restore ./iptables.master
+./07_set_cmd_alias.sh
