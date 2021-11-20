@@ -5,11 +5,9 @@ yes | cp -f ./cfg/kubernetes.repo /etc/yum.repos.d/kubernetes.repo
 yum list |grep kube
 yum -y install kubeadm kubelet kubectl
 
-echo "修改kubelet启动参数"
-sed -i '/KUBELET_CGROUP_ARGS/d' /etc/sysconfig/kubelet
-sed -i '/KUBE_PROXY_MODE/d' /etc/sysconfig/kubelet
-
-echo 'KUBELET_CGROUP_ARGS="--cgroup-driver=systemd"' >> /etc/sysconfig/kubelet
+# 修改kubelet启动配置,解决
+cat /dev/null > /etc/sysconfig/kubelet
+echo 'KUBELET_EXTRA_ARGS="--cgroup-driver=cgroupfs"' >> /etc/sysconfig/kubelet
 echo 'KUBE_PROXY_MODE="ipvs"' >> /etc/sysconfig/kubelet
 
 echo "-------/etc/sysconfig/kubelet-------"
