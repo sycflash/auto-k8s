@@ -14,7 +14,5 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-tail -n 2 $log_path
-
 echo
 echo "初始化master节点完毕,你可以在${log_path}文件中查看安装日志..."
