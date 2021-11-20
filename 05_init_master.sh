@@ -8,3 +8,8 @@ kubeadm init \
  --service-cidr=10.96.0.0/12 \
  --apiserver-advertise-address=${master_ip4} \
  | tee init_master.log
+
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
